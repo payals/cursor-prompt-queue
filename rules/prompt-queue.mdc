@@ -1,0 +1,35 @@
+---
+name: prompt-queue
+description: Activate when user says "execute prompt queue", "resume prompt queue", "run the queue", "continue the queue", "run queue step", "reset prompt queue", or "reset queue prompt"
+alwaysApply: false
+---
+
+# Prompt Queue Execution Rule
+
+When the user asks to execute, resume, or continue the prompt queue:
+
+1. **Read the skill**: `.cursor/skills/workflow-automation/prompt-queue/SKILL.md`
+2. **Read the queue**: `docs/prompt_queue.md`
+3. **Read the state**: `docs/prompt_queue_state.md`
+4. **Follow the skill's orchestration process exactly** — validate queue structure, resolve placeholders, dispatch subagents, update state file after each step
+
+When the user asks to **reset** the prompt queue ("reset prompt queue", "reset queue prompt"):
+
+1. **Read the skill**: `.cursor/skills/workflow-automation/prompt-queue/SKILL.md`
+2. **Follow the Reset Protocol** in the skill
+
+## Critical Files
+
+| File | Role |
+|------|------|
+| `docs/prompt_queue.md` | User-written prompts (READ-ONLY during execution) |
+| `docs/prompt_queue_state.md` | Runtime state with resolved variables (AGENT-WRITTEN) |
+
+## Key Constraints
+
+- NEVER modify `docs/prompt_queue.md` during execution — it is the user's source of truth
+- ALWAYS update `docs/prompt_queue_state.md` after each step completes
+- If `docs/TRACKER.md` exists, update it after each step completes
+- Each step gets a FRESH subagent via the Task tool — do not execute steps inline
+- If a `{{step_N.key}}` placeholder cannot be resolved, STOP and ask the user
+- If `pause_between_steps: true`, report progress and wait for the user to say "continue"
