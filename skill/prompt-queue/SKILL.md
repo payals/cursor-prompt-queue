@@ -82,6 +82,8 @@ digraph queue {
     "Append entry to TRACKER.md" [shape=box];
     "pause_between_steps?" [shape=diamond];
     "Report to user, wait for 'continue'" [shape=box];
+    "Re-read queue file" [shape=box];
+    "Re-validate queue structure" [shape=box];
     "Done" [shape=box];
 
     "Read queue + state files" -> "Validate queue structure";
@@ -99,8 +101,10 @@ digraph queue {
     "TRACKER.md exists?" -> "pause_between_steps?" [label="no"];
     "Append entry to TRACKER.md" -> "pause_between_steps?";
     "pause_between_steps?" -> "Report to user, wait for 'continue'" [label="yes"];
-    "pause_between_steps?" -> "Find next pending step" [label="no"];
-    "Report to user, wait for 'continue'" -> "Find next pending step";
+    "pause_between_steps?" -> "Re-read queue file" [label="no"];
+    "Report to user, wait for 'continue'" -> "Re-read queue file";
+    "Re-read queue file" -> "Re-validate queue structure";
+    "Re-validate queue structure" -> "Errors found?";
 }
 ```
 
@@ -128,7 +132,9 @@ digraph queue {
 8. **Update state file** — mark step completed, write resolved output variables
 9. **If `docs/TRACKER.md` exists** — append entry for completed step
 10. **Check pause** — if `pause_between_steps: true`, report progress to user and wait
-11. **Loop** to step 3
+11. **Re-read queue file** — re-read `docs/prompt_queue.md` to pick up any steps added mid-run
+12. **Re-validate** — validate the full queue structure again (catches errors in newly added steps)
+13. **Loop** to step 3
 
 ### Resume Protocol
 

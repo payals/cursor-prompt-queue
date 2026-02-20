@@ -130,6 +130,8 @@ or:
 
 Starting from a clean session avoids context confusion and gives the orchestrator full use of the context window for each step. With `pause_between_steps: true`, the agent stops after each step so you can review before continuing.
 
+You can add new steps to `docs/prompt_queue.md` while the queue is running. The orchestrator re-reads the queue file after each step, so new steps are picked up automatically on the next iteration.
+
 ### 3. Resume (if session dies)
 
 Open a new Cursor session and say:
